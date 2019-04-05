@@ -3,30 +3,33 @@
 
 <h1>Sign Up</h1>
 
-<form method="POST">
+<form method="POST" action='/welcome'>
   
     
   <label>
     Username:
-    <input type="text" />
+    <input type="text" name="username"/>
   </label>
   <br>
   <label>
     Email:
-    <input type="text" />
+    <input type="text" name="email"/>
   </label>
   <br>
   <label>
     Password:
-    <input type="text" />
+    <input type="password" name="pass1"/>
   </label>
   <br>
   <label>
     Confirm Password:
-    <input type="text" />
+    <input type="password" name="pass2"/>
   </label>
+  {% if mismatch %}
+  <p class='error'> Passwrds do not match</p>
+  {% endif %}
   <br>
-  <input type="submit" value="signup">
+  <input type="submit" value="Sign Up">
 
 </form>
 
