@@ -1,31 +1,53 @@
 from flask import Flask, request, redirect, render_template
 import os
 import cgi
+import re
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-@app.route("/signup", methods=['GET', 'POST'])
+@app.route("/signup")
 def index():
   return render_template('signup.html')
 
 
-@app.route("/welcome", methods=['POST'])
-def welcome():
+@app.route("/signup", methods=['POST'])
+def validate():
   username = request.form['username']
-  mismatch = False
-  no_uname = False
+  email = request.form['email']
+  uname_error = ''
+  password_empty = ''
+  password_mismatch = ''
 
   # Check if Username is empty
   if not username:
-    no_uname = True
-    return render_template("signup.html", no_uname=no_uname)
+    uname_error = 'Please enter a Username'
+  elif ' ' in username:
+    uname_error = 'Username cannot contain spaces'
+  elif len(username) < 3 or len(username) > 20:
+    uname_error = 'Username must be between 3 and 20 characters long'
 
+
+  # Check if passwords are empty
+  if not request.form['pass1']:
+    password_empty = 'Please enter a password and retype it below'
+    
   # Check if passwords match
-  if request.form['pass1'] == request.form['pass2']:
-    return render_template("welcome.html", username=username)
+  if not (request.form['pass1'] == request.form['pass2']):
+    password_mismatch = 'Passwrds do not match'
+  
+  # Check for previous errors, rerender template if any are present
+  if uname_error or password_empty or password_mismatch:
+    return render_template('signup.html', username=username, email=email,
+    uname_empty=uname_error,
+    password_empty=password_empty, password_mismatch=password_mismatch)
+    
   else:
-    mismatch = True
-    return render_template("signup.html", mismatch=mismatch)
+    return redirect('/welcome?uname={0}'.format(username))
+
+@app.route("/welcome")
+def welcome():
+  username = request.args.get('uname')
+  return render_template('welcome.html', username=username)
 
 app.run()
