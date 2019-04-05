@@ -10,6 +10,9 @@
     Username:
     <input type="text" name="username"/>
   </label>
+  {% if no_uname %}
+  <p class='error'>Please enter your Username</p>
+  {% endif %}
   <br>
   <label>
     Email:
@@ -26,7 +29,7 @@
     <input type="password" name="pass2"/>
   </label>
   {% if mismatch %}
-  <p class='error'> Passwrds do not match</p>
+  <p class='error'>Passwrds do not match</p>
   {% endif %}
   <br>
   <input type="submit" value="Sign Up">
