@@ -15,32 +15,64 @@ def index():
 def validate():
   username = request.form['username']
   email = request.form['email']
+  password = request.form['pass1']
+  verified_password = request.form['pass2']
   uname_error = ''
-  password_empty = ''
-  password_mismatch = ''
+  password_error = ''
+  email_error = ''
+
+  # USERNAME CHECKS
 
   # Check if Username is empty
   if not username:
     uname_error = 'Please enter a Username'
-  elif ' ' in username:
-    uname_error = 'Username cannot contain spaces'
-  elif len(username) < 3 or len(username) > 20:
+
+  # Check if username is between 3 and 20 characters 
+  elif re.match("^.{3,20}$", username) == None:
     uname_error = 'Username must be between 3 and 20 characters long'
 
+  # Check if username has any spaces
+  elif re.search("^\s", username) != None:
+    uname_error = 'Username cannot contain spaces'
 
-  # Check if passwords are empty
-  if not request.form['pass1']:
-    password_empty = 'Please enter a password and retype it below'
+  # Check if username has special characters
+  elif re.match("^[a-zA-Z0-9]{3,20}$", username) == None:
+    uname_error = "Username can only contain letters and/or numbers."
+
+
+  # END USERNAME CHECKS
+
+  # PASSWORD CHECKS
+
+  # Check if any of the password boxes are empty
+  if not password or not verified_password:
+    password_error = 'Please enter a password and retype it below'
     
   # Check if passwords match
-  if not (request.form['pass1'] == request.form['pass2']):
-    password_mismatch = 'Passwrds do not match'
+  if password != verified_password:
+    password_error = 'Passwrds do not match'
+
+  # Check if either password has spaces
+  elif re.search("^\s", password) != None:
+    password_error = "Password cannot contain spaces"
+  elif re.match("^.{3,20}$", password) == None:
+    password_error = "Password must be between 3 and 20 characters"
+
+  # END PASSWORD CHECKS
+
+  # EMAIL CHECKS
+  if email:
+    if re.match("[a-zA-Z.-_]+@[a-zA-Z-_.]+\.[a-zA-Z0-9]{3,20}", email) == None:
+      email_error = "Email must be in the form of \"emailname@host.domain\""
+    elif re.search("@@", email) != None or re.search("@+[a-zA-Z-_.]+@", email) != None:
+      email_error = "Email can only contain 1 at sign (@)"
+  # END EMAIL CHECKS
   
   # Check for previous errors, rerender template if any are present
-  if uname_error or password_empty or password_mismatch:
+  if uname_error or password_error or email_error:
     return render_template('signup.html', username=username, email=email,
-    uname_empty=uname_error,
-    password_empty=password_empty, password_mismatch=password_mismatch)
+    email_error=email_error, uname_error=uname_error,
+    password_error=password_error)
     
   else:
     return redirect('/welcome?uname={0}'.format(username))
