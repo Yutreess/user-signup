@@ -18,9 +18,10 @@ def validate():
   password = request.form['pass1']
   verified_password = request.form['pass2']
   uname_error = ''
-  password_error = ''
   email_error = ''
-
+  password_error = ''
+  verify_password_error = ''
+  
   # USERNAME CHECKS
 
   # Check if Username is empty
@@ -44,19 +45,27 @@ def validate():
 
   # PASSWORD CHECKS
 
-  # Check if any of the password boxes are empty
-  if not password or not verified_password:
-    password_error = 'Please enter a password and retype it below'
-    
-  # Check if passwords match
-  if password != verified_password:
-    password_error = 'Passwrds do not match'
-
-  # Check if either password has spaces
-  elif re.search("^\s", password) != None:
+  # Check if password has spaces
+  if re.search("^\s", password) != None:
     password_error = "Password cannot contain spaces"
   elif re.match("^.{3,20}$", password) == None:
     password_error = "Password must be between 3 and 20 characters"
+
+  # Check if verified password has spaces
+  if re.search("^\s", verified_password) != None:
+    verified_password_error = "Password cannot contain spaces"
+  elif re.match("^.{3,20}$", verified_password) == None:
+    verified_password_error = "Password must be between 3 and 20 characters"
+
+  # Check if passwords match
+  if not password_error and not verified_password_error and password != verified_password:
+    password_error = 'Passwrods do not match'
+
+  # Check if any of the password boxes are empty
+  if not password:
+    password_error = 'Please enter a password and retype it below'
+  elif not verified_password:
+    verify_password_error = 'Remember to retype the password from above'
 
   # END PASSWORD CHECKS
 
@@ -69,10 +78,10 @@ def validate():
   # END EMAIL CHECKS
   
   # Check for previous errors, rerender template if any are present
-  if uname_error or password_error or email_error:
+  if uname_error or password_error or email_error or verify_password_error:
     return render_template('signup.html', username=username, email=email,
     email_error=email_error, uname_error=uname_error,
-    password_error=password_error)
+    password_error=password_error, verify_password_error=verify_password_error)
     
   else:
     return redirect('/welcome?uname={0}'.format(username))
