@@ -45,36 +45,44 @@ def validate():
 
   # PASSWORD CHECKS
 
+  # Check if password is empty
+  if not password:
+    password_error = 'Please enter a password and retype it below'
   # Check if password has spaces
-  if re.search("^\s", password) != None:
+  elif re.search("^\s", password) != None:
     password_error = "Password cannot contain spaces"
+  # Check if password is in the character range
   elif re.match("^.{3,20}$", password) == None:
     password_error = "Password must be between 3 and 20 characters"
 
+  # Check if verified password is empty
+  if not verified_password:
+    verify_password_error = 'Remember to retype the password from above'
   # Check if verified password has spaces
-  if re.search("^\s", verified_password) != None:
-    verified_password_error = "Password cannot contain spaces"
+  elif re.search("^\s", verified_password) != None:
+    verify_password_error = "Password cannot contain spaces"
+  # Check if verified password is in the character range
   elif re.match("^.{3,20}$", verified_password) == None:
-    verified_password_error = "Password must be between 3 and 20 characters"
+    verify_password_error = "Password must be between 3 and 20 characters"  
 
   # Check if passwords match
-  if not password_error and not verified_password_error and password != verified_password:
+  if not password_error and not verify_password_error and password != verified_password:
     password_error = 'Passwrods do not match'
-
-  # Check if any of the password boxes are empty
-  if not password:
-    password_error = 'Please enter a password and retype it below'
-  elif not verified_password:
-    verify_password_error = 'Remember to retype the password from above'
 
   # END PASSWORD CHECKS
 
   # EMAIL CHECKS
   if email:
-    if re.match("[a-zA-Z.-_]+@[a-zA-Z-_.]+\.[a-zA-Z0-9]{3,20}", email) == None:
-      email_error = "Email must be in the form of \"emailname@host.domain\""
+    if re.search("@", email) == None:
+      email_error = "Email must contain an at sign '@'"
+    elif re.search("\.", email) == None:
+      email_error = "Email must contain a dot '.'"
+    elif re.match("^.+\.$", email) != None:
+      email_error = "Email cannot end in a dot '.'"
     elif re.search("@@", email) != None or re.search("@+[a-zA-Z-_.]+@", email) != None:
-      email_error = "Email can only contain 1 at sign (@)"
+      email_error = "Email can only contain 1 at sign '@'"
+    elif re.match("[a-zA-Z.-_]+@[a-zA-Z-_.]+\.[a-zA-Z0-9]{3,20}", email) == None:
+      email_error = "Email must be in the form of \"emailname@host.domain\""
   # END EMAIL CHECKS
   
   # Check for previous errors, rerender template if any are present
