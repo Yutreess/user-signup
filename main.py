@@ -58,16 +58,32 @@ def validate():
   # Check if verified password is empty
   if not verified_password:
     verify_password_error = 'Remember to retype the password from above'
+    """
+    # Empty verify_password_error if it's the same as the password error
+    if verify_password_error == password_error:
+      verify_password_error = ''
+    """
   # Check if verified password has spaces
   elif re.search("^\s", verified_password) != None:
     verify_password_error = "Password cannot contain spaces"
+    """
+    # Empty verify_password_error if it's the same as the password error
+    if verify_password_error == password_error:
+      verify_password_error = ''
+    """
   # Check if verified password is in the character range
   elif re.match("^.{3,20}$", verified_password) == None:
-    verify_password_error = "Password must be between 3 and 20 characters"  
+    verify_password_error = "Password must be between 3 and 20 characters"
+    """
+    # Empty verify_password_error if it's the same as the password error
+    if verify_password_error == password_error:
+      verify_password_error = ''
+    """
 
   # Check if passwords match
-  if not password_error and not verify_password_error and password != verified_password:
-    password_error = 'Passwrods do not match'
+  if password != verified_password:
+    verify_password_error = ''
+    password_error = 'Passwords do not match'
 
   # END PASSWORD CHECKS
 
@@ -81,6 +97,8 @@ def validate():
       email_error = "Email cannot end in a dot '.'"
     elif re.search("@@", email) != None or re.search("@+[a-zA-Z-_.]+@", email) != None:
       email_error = "Email can only contain 1 at sign '@'"
+    elif re.match("^.+@$", email) != None:
+      email_error = "Email cannot end in an at sign '@'"
     elif re.match("[a-zA-Z.-_]+@[a-zA-Z-_.]+\.[a-zA-Z0-9]{3,20}", email) == None:
       email_error = "Email must be in the form of \"emailname@host.domain\""
   # END EMAIL CHECKS
